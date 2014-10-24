@@ -23,7 +23,6 @@ def load_users(session, filename):
 
 def load_movies(session, filename):
     # use u.item
-    # would like to improve date format but not a big deal
     with open(filename, 'rb') as csvfile:
         
         lines = csv.reader(csvfile, delimiter = '|')
