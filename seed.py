@@ -31,7 +31,7 @@ def load_movies(session, filename):
             movie = model.Movie()
             movie.movie_id = line[0].strip()
             movie.title = line[1].strip()
-            movie.title = movie.title[:-6] #removing year from title
+            movie.title = movie.title[:-6].strip()
             movie.title = movie.title.decode("latin-1")
             movie.release_date = datetime.strptime(line[2].strip(),"%d-%b-%Y")
             movie.imdb = line[4].strip()
