@@ -31,8 +31,8 @@ def load_movies(session, filename):
             movie = model.Movie()
             movie.movie_id = line[0].strip()
             movie.title = line[1].strip()
-            movie.title = movie.title[:-6].strip()
-            movie.title = movie.title.decode("latin-1")
+            movie.title = movie.title[:-6]
+            movie.title = movie.title.decode("latin-1").strip()
             movie.release_date = datetime.strptime(line[2].strip(),"%d-%b-%Y")
             movie.imdb = line[4].strip()
             session.add(movie)
@@ -60,7 +60,7 @@ def load_ratings(session, filename):
 def main(session):
     # when running for real, remove echo = true
     # You'll call each of the load_* functions with the session as an argument
-    # load_movies(session, 'seed_data/u.item')
+     load_movies(session, 'seed_data/u.item')
     # load_ratings(session, 'seed_data/u.data')
     # load_users(session,'seed_data/u.user')
 
