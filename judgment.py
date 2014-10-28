@@ -1,4 +1,5 @@
 from flask import Flask, render_template, redirect, request, session as websession
+from sqlalchemy import func
 import model
 
 app = Flask(__name__)
@@ -7,8 +8,18 @@ app.secret_key = 'MovieRatings4Eva'
 @app.route("/")
 def index():
     return render_template('index.html')
-    # user_list = model.session.query(model.User).limit(5).all()
-    # return render_template('user_list.html', user_list=user_list)
+
+@app.route("/userlist")
+def show_user_list():
+    dbsession = model.connect()
+    # user_list = dbsession.query(model.User, model.Rating).join(model.User.ratings).all()
+    # user_list = dbsession.query(model.Rating.user_id, func.count(model.Rating.rating)).join(model.User).group_by(model.Rating.user_id).all()
+    
+    user_list = dbsession.query(model.Rating.user_id, func.count(model.Rating.rating), model.User.age).join(model.User).group_by(model.Rating.user_id).all()
+
+
+        # rated_movies = dbsession.query(model.Movie, model.Rating).join(model.Movie.ratings).filter_by(user_id=user_id).all()
+    return render_template('user_list.html', user_list=user_list)
 
 @app.route("/login")
 def login():
@@ -63,17 +74,26 @@ def log_user_in():
         websession['user'] = {'email': email, 'user_id': user_id}
         return redirect("/welcome")
 
+@app.route("/user")
+def display_a_users_list_of_ratings():
+    dbsession = model.connect()
+    user_id = request.args.get('id')
+    rated_movies = dbsession.query(model.Movie, model.Rating).join(model.Movie.ratings).filter_by(user_id=user_id).all()
+    return render_template('welcome.html', rated_movies = rated_movies, name = user_id)
 
 
 @app.route("/welcome")
 def welcome():
     dbsession = model.connect()
-  #  print "websession:", websession
     user_id = websession['user']['user_id']   
- #   print "This is user_id 2",user_id
-    rated_movies = dbsession.query(model.Rating).filter_by(user_id = websession['user']['user_id']).all()
+    # rated_movies = dbsession.query(model.Rating).filter_by(user_id = websession['user']['user_id']).all()
+
+    rated_movies = dbsession.query(model.Movie, model.Rating).join(model.Movie.ratings).filter_by(user_id=user_id).all()
+    # print dir(rated_movies)
+    # for rated_movie in rated_movies:
+    #     print dir(rated_movie)
     
-    return render_template('welcome.html', rated_movies = rated_movies)
+    return render_template('welcome.html', rated_movies = rated_movies, name = user_id)
 
 
 if __name__ == "__main__":

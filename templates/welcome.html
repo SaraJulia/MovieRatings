@@ -1,0 +1,33 @@
+<html>
+<head>
+    <!-- Bootstrap core CSS -->
+    <link href="/static/bootstrap.min.css" rel="stylesheet">
+
+</head>
+<body>
+<table class="table table-striped">
+   <caption>Movies {{name}} Rated</caption> <!-- later change this to username instead of "you" -->
+   <thead>
+      <tr>
+         <th>Movie Title</th>
+         <th>Your Rating</th>
+      </tr>
+   </thead>
+   <tbody>
+
+       {% for rated_movie in rated_movies%}
+        <tr>
+            <td> {{rated_movie.Movie.title}} </td>
+            <td> {{rated_movie.Rating.rating}} </td>
+        </tr>
+        {% endfor %}
+
+
+
+     </tbody>
+</table>
+
+
+
+</body>
+</html>
