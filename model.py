@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker, relationship, backref, scoped_session
 # ENGINE = None
 # Session = None
 
-ENGINE = create_engine("sqlite:///ratings.db", echo=True)
+ENGINE = create_engine("sqlite:///ratings.db", echo=False)
 session = scoped_session(sessionmaker(bind = ENGINE,
                                         autocommit = False,
                                         autoflush = False))
@@ -51,7 +51,7 @@ def connect():
     global ENGINE
     global Session
 
-    ENGINE = create_engine("sqlite:///ratings.db", echo=True)
+    ENGINE = create_engine("sqlite:///ratings.db", echo=False)
     Session = sessionmaker(bind = ENGINE)
 
     return Session()

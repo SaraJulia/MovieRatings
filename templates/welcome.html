@@ -10,14 +10,14 @@
    <thead>
       <tr>
          <th>Movie Title</th>
-         <th>Your Rating</th>
+         <th>Rating</th>
       </tr>
    </thead>
    <tbody>
 
        {% for rated_movie in rated_movies%}
         <tr>
-            <td> {{rated_movie.Movie.title}} </td>
+            <td> <a href = "/movie?movie_id={{ rated_movie.Movie.movie_id }}"> {{rated_movie.Movie.title}}</a> </td>
             <td> {{rated_movie.Rating.rating}} </td>
         </tr>
         {% endfor %}

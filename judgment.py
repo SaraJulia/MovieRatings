@@ -95,6 +95,52 @@ def welcome():
     
     return render_template('welcome.html', rated_movies = rated_movies, name = user_id)
 
+@app.route("/movie")
+def movie_page():
+    dbsession = model.connect()
+    movie_id = request.args.get('movie_id')
+    movie = dbsession.query(model.Movie).filter_by(movie_id = movie_id).first()
+    movie_title = movie.title
+    ratings = dbsession.query(model.Rating).filter_by(movie_id = movie_id).all()
+    return render_template('moviepage.html',movie_id = movie_id, movie_title = movie_title, ratings = ratings)
+
+@app.route("/rate")
+def rate_movie():
+    if 'user' in websession:
+        dbsession = model.connect()
+        movie_id = request.args.get('movie_id')
+        websession['movie_id'] = movie_id
+        movie = dbsession.query(model.Movie).filter_by(movie_id = movie_id).first()
+        movie_title = movie.title
+        return render_template('rateform.html', movie_title = movie_title)
+    else:
+        return redirect("/signup")
+
+@app.route("/submitrating", methods = ["POST"])
+def submit_rating():
+   # print "you got here"
+    rating = request.form.get("rating")
+    user_id = websession['user']['user_id']
+    movie_id = websession['movie_id']
+    
+
+    dbsession = model.connect()
+    results = dbsession.query(model.Rating).filter_by(movie_id = movie_id).filter_by(user_id = user_id).all()
+
+    if  results == []:
+        new_rating = model.Rating(rating = rating, user_id = user_id, movie_id = movie_id)
+        dbsession.add(new_rating)
+    else: 
+        results[0].rating = rating
+        dbsession.add(results[0])
+
+    
+    dbsession.commit()
+ #    user_id = dbsession.query(model.User).filter_by(email = email).one()
+ #    user_id = user_id.user_id
+ # #   print "this is user id 1", user_id
+ #    websession['user'] = {'email': email, 'user_id': user_id}
+    return redirect('/movie?movie_id='+movie_id)
 
 if __name__ == "__main__":
     app.run(debug = True)

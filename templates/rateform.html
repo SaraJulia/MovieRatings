@@ -8,7 +8,7 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>Signin Template for Bootstrap</title>
+    <title>Rate a Movie</title>
 
     <!-- Bootstrap core CSS -->
     <link href="/static/bootstrap.min.css" rel="stylesheet">
@@ -31,16 +31,18 @@
 
     <div class="container">
 
-      <form class="form-signin" role="form" action="/loguser" method="POST">
-        <h2 class="form-signin-heading">Please sign in</h2>
-        <input type="email" class="form-control" name="email" placeholder="Email address" required autofocus>
-        <input type="password" class="form-control" name="email" placeholder="Password" required>
-        <div class="checkbox">
-          <label>
-            <input type="checkbox" value="remember-me"> Remember me
-          </label>
+      <form class="form-signin" role="form" action="/submitrating" method="POST">
+        <h2 class="form-signin-heading">Add your rating for {{movie_title}}</h2>
+        1 = Worst movie ever, 5 = Best movie ever
+        <select class="form-control" name="rating" required autofocus>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+        </select>
+          <button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
         </div>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
       </form>
 
     </div> <!-- /container -->
