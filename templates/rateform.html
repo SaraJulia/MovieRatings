@@ -32,7 +32,8 @@
     <div class="container">
 
       <form class="form-signin" role="form" action="/submitrating" method="POST">
-        <h2 class="form-signin-heading">Add your rating for {{movie_title}}</h2>
+        <h2 class="form-signin-heading">Add your rating for {{movie.title}}</h2>
+        <input type="hidden" name="movie_id" value="{{ movie.movie_id }}" />
         1 = Worst movie ever, 5 = Best movie ever
         <select class="form-control" name="rating" required autofocus>
             <option value="1">1</option>

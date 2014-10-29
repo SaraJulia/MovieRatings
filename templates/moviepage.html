@@ -57,16 +57,16 @@
     <!-- Main jumbotron for a primary marketing message or call to action -->
     <div class="jumbotron">
       <div class="container">
-        <h1>{{movie_title}}</h1>
+        <h1>{{movie.title}}</h1>
         <p>This page displays all the ratings for this movie.</p>
-        <p><a href="/rate?movie_id={{movie_id}}" class="btn btn-primary btn-lg" role="button">Add/update my rating </a></p>
+        <p><a href="/rate?movie_id={{movie.movie_id}}" class="btn btn-primary btn-lg" role="button">Add/update my rating </a></p>
       </div>
     </div>
 
     <div class="container">
       <!-- Example row of columns -->
     <table class="table table-striped">
-       <caption>{{movie_title}}</caption> <!-- later change this to username instead of "you" -->
+       <caption>{{movie.title}}</caption> <!-- later change this to username instead of "you" -->
        <thead>
           <tr>
              <th>User</th>
@@ -75,7 +75,7 @@
        </thead>
        <tbody>
 
-           {% for rating in ratings%}
+           {% for rating in movie.ratings%}
             <tr>
                 <td> <a href="/user?id={{ rating.user_id }}">User {{ rating.user_id }}</a> </td>
                 <td> {{rating.rating}} </td>
