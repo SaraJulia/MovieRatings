@@ -50,8 +50,8 @@ def load_ratings(session, filename):
         for line in temp_file:
             line = line.split()
             rating = model.Rating() 
-            rating.movie_id = line[0].strip()
-            rating.user_id = line[1].strip()
+            rating.user_id = line[0].strip()
+            rating.movie_id = line[1].strip()
             rating.rating = line[2].strip()
             session.add(rating)
 
@@ -60,8 +60,8 @@ def load_ratings(session, filename):
 def main(session):
     # when running for real, remove echo = true
     # You'll call each of the load_* functions with the session as an argument
-     load_movies(session, 'seed_data/u.item')
-    # load_ratings(session, 'seed_data/u.data')
+     # load_movies(session, 'seed_data/u.item')
+    #load_ratings(session, 'seed_data/u.data')
     # load_users(session,'seed_data/u.user')
 
 if __name__ == "__main__":

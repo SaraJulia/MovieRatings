@@ -48,29 +48,65 @@ class User(Base):
     def predict_rating(self, movie):
         #m = session.query(Movie).filter_by(title=title).one()
 
-        # ratings = self.ratings
+        #ratings = self.ratings
 
         other_ratings = movie.ratings
-        other_users = []
 
-        for r in other_ratings:
-            other_users.append(r.user)
+        # similarities = [ (self.similarity(r.user), r) \
+        #     for r in other_ratings ]
+        
+        similarities = []
+        # creates a list of tuples (similarity, rating object)
+        for rating in other_ratings:
+            similarities.append((self.similarity(rating.user),rating)) 
 
-     #   print "other users: ", other_users
+        similarities.sort(reverse = True)
 
-        user_correlations = []
-        for other_user in other_users:
-            print other_user
-            similarity = self.similarity(other_user)
-            pair = (similarity, other_user.user_id)
-            user_correlations.append(pair)
 
-        user_correlations.sort(reverse = True)
+        # similarities = [ sim for sim in similarities if sim[0] > 0 ]
+        pos_similarities = []
+        for similarity in similarities:
+            if similarity[0] > 0:
+                pos_similarities.append(similarity)
 
-        best_match = user_correlations[0]
-        print best_match
-        # best_match_user_id = session.query(Rating).filter_by(user_id = best_match[1]).one()
-        # prediction = best_match[0] * best_match_user_id.rating
+
+        if not pos_similarities:
+            return None
+
+        # numerator = sum([ r.rating * similarity for similarity, r in pos_similarities ])
+        # denominator = sum([ similarity[0] for similarity in pos_similarities ])
+        # return numerator/denominator
+
+        numerator = 0
+        for similarity, r in pos_similarities:
+            this_mean = similarity * r.rating
+            numerator += this_mean
+
+        denominator = 0
+        for similarity in pos_similarities:
+            denominator += similarity[0]
+
+        return numerator/denominator
+
+# THIS USED TO WORK
+        # other_ratings = movie.ratings
+        # other_users = []
+
+        # for r in other_ratings:
+        #     other_users.append(r.user)
+
+        # user_correlations = []
+        # for other_user in other_users: 
+        #     similarity = self.similarity(other_user)
+        #     pair = (similarity, other_user.user_id)
+        #     user_correlations.append(pair)
+
+        # user_correlations.sort(reverse = True)
+
+        # best_match = user_correlations[0]
+        # best_match_rating = session.query(Rating).filter_by(user_id = best_match[1], movie_id = movie.movie_id).one()
+
+        # prediction = best_match[0] * float(best_match_rating.rating)
 
         # return prediction
 
@@ -106,7 +142,11 @@ def connect():
 
 def main():
     """In case we need this for something"""
-   #  global Base
+
+    m = session.query(Movie).get(300)
+    u = session.query(User).get(1)
+    print u.predict_rating(m)
+   # #  global Base
    #  global ENGINE
 
    #  ENGINE = create_engine("sqlite:///ratings.db", echo=False)
