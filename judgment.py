@@ -48,6 +48,7 @@ def add_user():
         
 
 @app.route("/loguser", methods = ["POST"])     
+def log_user_in():
     email = request.form.get("email")
     password = request.form.get("password")
 
@@ -82,9 +83,25 @@ def welcome():
 
 @app.route("/movie")
 def movie_page():
-    movie_id = request.args.get('movie_id')
+    movie_id = int(request.args.get('movie_id'))
     movie = model.session.query(model.Movie).filter_by(movie_id = movie_id).first()
-    return render_template('moviepage.html', movie = movie)
+    
+    #call prediction method for you, for this movie
+    your_rating = None
+    prediction = None
+
+    if 'user_id' in websession:
+        user_id = websession['user_id']
+        user = model.session.query(model.User).get(user_id)
+        for rating in user.ratings:
+            if rating.movie_id == movie_id:
+                your_rating = rating.rating
+            else:
+                prediction = user.predict_rating(movie)
+
+    print "movie:", movie.title, "prediction ", prediction, "your_rating", your_rating
+                
+    return render_template('moviepage.html', movie = movie, prediction = prediction, your_rating = your_rating)
 
 @app.route("/rate")
 def rate_movie():
@@ -108,8 +125,8 @@ def submit_rating():
         new_rating = model.Rating(rating = rating, user_id = user_id, movie_id = movie_id)
         model.session.add(new_rating)
     else: 
-        results[0].rating = rating
-        model.session.add(results[0])
+        query_results[0].rating = rating
+        model.session.add(query_results[0])
 
     
     model.session.commit()

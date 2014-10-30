@@ -60,6 +60,11 @@
         <h1>{{movie.title}}</h1>
         <p>This page displays all the ratings for this movie.</p>
         <p><a href="/rate?movie_id={{movie.movie_id}}" class="btn btn-primary btn-lg" role="button">Add/update my rating </a></p>
+        {% if your_rating %}
+        Your rating: {{your_rating}}
+        {% else %}
+        Prediction: {{ prediction }}
+        {% endif %}
       </div>
     </div>
 

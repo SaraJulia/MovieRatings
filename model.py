@@ -33,8 +33,6 @@ class User(Base):
         for r in self.ratings:
             u_ratings[r.movie_id] = r
 
-
-        #print "user2: ", user2
         for r in user2.ratings:
             u_r = u_ratings.get(r.movie_id)
             if u_r:
@@ -46,36 +44,24 @@ class User(Base):
             return 0.0
 
     def predict_rating(self, movie):
-        #m = session.query(Movie).filter_by(title=title).one()
-
-        #ratings = self.ratings
 
         other_ratings = movie.ratings
 
-        # similarities = [ (self.similarity(r.user), r) \
-        #     for r in other_ratings ]
-        
         similarities = []
         # creates a list of tuples (similarity, rating object)
         for rating in other_ratings:
-            similarities.append((self.similarity(rating.user),rating)) 
+            #similarities.append((self.similarity(rating.user),rating)) # old code
+            similarities.append((movie.similarity(rating.movie),rating)) ## bonus round
 
         similarities.sort(reverse = True)
 
-
-        # similarities = [ sim for sim in similarities if sim[0] > 0 ]
         pos_similarities = []
         for similarity in similarities:
             if similarity[0] > 0:
                 pos_similarities.append(similarity)
 
-
         if not pos_similarities:
-            return None
-
-        # numerator = sum([ r.rating * similarity for similarity, r in pos_similarities ])
-        # denominator = sum([ similarity[0] for similarity in pos_similarities ])
-        # return numerator/denominator
+            return "There were no positives"
 
         numerator = 0
         for similarity, r in pos_similarities:
@@ -88,7 +74,7 @@ class User(Base):
 
         return numerator/denominator
 
-# THIS USED TO WORK
+# THIS ALSO WORKS
         # other_ratings = movie.ratings
         # other_users = []
 
@@ -117,6 +103,27 @@ class Movie(Base):
     title =         Column(String(64), nullable = True)
     release_date =  Column(Date, nullable = True)
     imdb =          Column(String(15), nullable = True)
+
+    def similarity(self,movie2):
+        m_ratings = {}
+        paired_ratings = []
+        for r in self.ratings:
+            m_ratings[r.user_id] = r #dictionary for this movie where the user id 
+            #is the key and that user's rating of this movie is the value
+
+        #for every rating in the other movie's list of ratings objects
+        for r in movie2.ratings:
+            #m_r is 
+            m_r = m_ratings.get(r.user_id)
+            if m_r:
+                #print (m_r.rating, r.rating)
+                paired_ratings.append( (m_r.rating, r.rating) )
+
+        if paired_ratings:
+            return correlation.pearson(paired_ratings)
+        else:
+            return 0.0
+
 
 class Rating(Base):
     __tablename__ = 'ratings'
