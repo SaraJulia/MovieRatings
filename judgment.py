@@ -89,6 +89,7 @@ def movie_page():
     #call prediction method for you, for this movie
     your_rating = None
     prediction = None
+    effective_rating = None
 
     if 'user_id' in websession:
         user_id = websession['user_id']
@@ -96,12 +97,29 @@ def movie_page():
         for rating in user.ratings:
             if rating.movie_id == movie_id:
                 your_rating = rating.rating
+                effective_rating = your_rating
             else:
                 prediction = user.predict_rating(movie)
+                effective_rating = prediction
 
-    print "movie:", movie.title, "prediction ", prediction, "your_rating", your_rating
+    the_eye = model.session.query(model.User).filter_by(email="theeye@ofjudgment.com").one()
+    eye_rating = model.session.query(model.Rating).filter_by(user_id=the_eye.user_id, movie_id=movie.movie_id).first()
+
+    if not eye_rating:
+        eye_rating = the_eye.predict_rating(movie)
+    else:
+        eye_rating = eye_rating.rating
+
+    difference = abs(eye_rating - effective_rating)
+
+    messages = [ "I suppose you don't have such bad taste after all.",
+             "I regret every decision that I've ever made that has brought me to listen to your opinion.",
+             "Words fail me, as your taste in movies has clearly failed you.",
+             "That movie is great. For a clown to watch. Idiot."]
+
+    beratement = messages[int(difference)]
                 
-    return render_template('moviepage.html', movie = movie, prediction = prediction, your_rating = your_rating)
+    return render_template('moviepage.html', movie = movie, prediction = prediction, your_rating = your_rating, beratement = beratement)
 
 @app.route("/rate")
 def rate_movie():

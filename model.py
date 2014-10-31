@@ -150,9 +150,9 @@ def connect():
 def main():
     """In case we need this for something"""
 
-    m = session.query(Movie).get(300)
-    u = session.query(User).get(1)
-    print u.predict_rating(m)
+    # m = session.query(Movie).get(300)
+    # u = session.query(User).get(1)
+    # print u.predict_rating(m)
    # #  global Base
    #  global ENGINE
 
