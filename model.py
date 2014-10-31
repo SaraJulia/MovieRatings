@@ -28,6 +28,7 @@ class User(Base):
     zipcode =   Column(String(15), nullable = True)
 
     def similarity(self,user2):
+        """Produces a pearson coefficient given a user and a second user."""
         u_ratings = {}
         paired_ratings = []
         for r in self.ratings:
@@ -44,7 +45,7 @@ class User(Base):
             return 0.0
 
     def predict_rating(self, movie):
-
+        """generates a prediction based on a pearson coefficient."""
         other_ratings = movie.ratings
 
         similarities = []
@@ -64,13 +65,11 @@ class User(Base):
             return "There were no positives"
 
         numerator = 0
+        denominator = 0
         for similarity, r in pos_similarities:
             this_mean = similarity * r.rating
             numerator += this_mean
-
-        denominator = 0
-        for similarity in pos_similarities:
-            denominator += similarity[0]
+            denominator += similarity
 
         return numerator/denominator
 
@@ -105,6 +104,7 @@ class Movie(Base):
     imdb =          Column(String(15), nullable = True)
 
     def similarity(self,movie2):
+        """Compares two movies and generates a pearson coefficient."""
         m_ratings = {}
         paired_ratings = []
         for r in self.ratings:

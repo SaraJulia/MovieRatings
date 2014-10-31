@@ -30,6 +30,7 @@ def sign_up():
 
 @app.route("/adduser",methods = ["POST"]) 
 def add_user():
+    """ Adds a new user to SQLite database"""
     email = request.form.get("email")
     password = request.form.get("password")
     age = request.form.get("age")
@@ -49,6 +50,7 @@ def add_user():
 
 @app.route("/loguser", methods = ["POST"])     
 def log_user_in():
+    """Logs in an existing user"""
     email = request.form.get("email")
     password = request.form.get("password")
 
@@ -65,6 +67,7 @@ def log_user_in():
 
 @app.route("/user") 
 def display_a_users_list_of_ratings():
+    """Given a user's id, displays a list of all of that user's ratings"""
     user_id = request.args.get('id')
     rated_movies = model.session.query(model.Movie, model.Rating).join(model.Movie.ratings).filter_by(user_id=user_id).all()
     return render_template('welcome.html', rated_movies = rated_movies, name = user_id)
@@ -72,7 +75,7 @@ def display_a_users_list_of_ratings():
 
 @app.route("/welcome") 
 def welcome():
- 
+    """Displays all of a user's rated movies upon log in"""
     user_id = websession['user_id']   
 
     rated_movies = model.session.query(model.Movie, model.Rating).join(model.Movie.ratings).filter_by(user_id=user_id).all()
@@ -83,6 +86,8 @@ def welcome():
 
 @app.route("/movie")
 def movie_page():
+    """Displays a movie's title and a list of users and ratings.  Makes a prediction for how much the user would like the movie, and then checks that against the 
+    judgmental eye's prediction."""
     movie_id = int(request.args.get('movie_id'))
     movie = model.session.query(model.Movie).filter_by(movie_id = movie_id).first()
     
@@ -133,6 +138,7 @@ def rate_movie():
 
 @app.route("/submitrating", methods = ["POST"])
 def submit_rating():
+    """Adds a rating to the database."""
     rating = request.form.get("rating")
     user_id = websession['user_id']
     movie_id = request.form.get("movie_id")
